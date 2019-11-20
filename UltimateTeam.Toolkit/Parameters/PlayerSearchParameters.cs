@@ -38,11 +38,21 @@ namespace UltimateTeam.Toolkit.Parameters
             if (MaxBid > 0)
                 uriString += "&macr=" + MaxBid;
 
+            // For searching for an exact player, using the resource ID
+           if(ResourceId != 0)
+            {
+                uriString += "&maskedDefId=" + ResourceId;
+            }
+
+            // Not needed in 2019
+            /*
+             *
             if (ResourceId <= 16777216)
                 uriString += "&maskedDefId=" + ResourceId.CalculateBaseId();
             else
                 uriString += "&definitionId=" + ResourceId;
 
+            */
             SetPosition(ref uriString);
 
             uriString += "&type=" + Type.ToLower();

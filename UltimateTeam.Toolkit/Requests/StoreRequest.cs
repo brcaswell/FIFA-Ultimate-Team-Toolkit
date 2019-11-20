@@ -14,10 +14,10 @@ namespace UltimateTeam.Toolkit.Requests
             var uriString = string.Format(Resources.FutHome + Resources.Store);
 
             AddCommonHeaders();
-            uriString += $"?_={DateTime.Now.ToUnixTime()}";
+            uriString += $"&_={DateTime.Now.ToUnixTime()}";
 
             var storeResponseMessage = await HttpClient
-                .PostAsync(uriString, new StringContent(" "))
+                .GetAsync(uriString)
                 .ConfigureAwait(false);
 
             return await DeserializeAsync<StoreResponse>(storeResponseMessage);

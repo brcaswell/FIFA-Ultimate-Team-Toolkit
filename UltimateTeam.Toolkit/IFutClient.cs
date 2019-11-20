@@ -71,6 +71,10 @@ namespace UltimateTeam.Toolkit
 
         Task<ListGiftsResponse> GetGiftsListAsync();
 
+        Task<ListMessageResponse> GetMessageListAsync();
+
+        Task RemoveLiveMessageAsync(long id);
+
         Task GetGiftAsync(int idGift);
 
         Task<DefinitionResponse> GetDefinitionsAsync(long baseId);

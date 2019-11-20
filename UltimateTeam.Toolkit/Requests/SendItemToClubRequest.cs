@@ -28,8 +28,17 @@ namespace UltimateTeam.Toolkit.Requests
                               : new StringContent($"{{\"itemData\":[{{\"pile\":\"club\",\"id\":\"{_itemData.Id}\"}}]}}");
 
             AddCommonHeaders();
-            uriString += $"?_={DateTime.Now.ToUnixTime()}";
-            clubResponseMessageTask = HttpClient.PutAsync(uriString, content);
+
+            if (_itemData.CardSubTypeId == 231)
+            {
+                uriString += "/" + _itemData.Id;
+                clubResponseMessageTask = HttpClient.PostAsync(uriString, content);
+            }
+            else
+            {
+                uriString += $"?_={DateTime.Now.ToUnixTime()}";
+                clubResponseMessageTask = HttpClient.PutAsync(uriString, content);
+            }
 
             var clubResponseMessage = await clubResponseMessageTask.ConfigureAwait(false);
 

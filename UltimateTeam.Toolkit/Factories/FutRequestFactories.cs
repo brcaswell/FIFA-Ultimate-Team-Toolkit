@@ -60,6 +60,8 @@ namespace UltimateTeam.Toolkit.Factories
 
         private Func<AuctionInfo, IFutRequest<byte>> _removeFromTradePileRequestFactory;
 
+        private Func<long, IFutRequest<byte>> _removeLiveMessageRequestFactory;
+
         private Func<ushort, IFutRequest<SquadDetailsResponse>> _squadDetailsRequestFactory;
 
         private Func<ItemData, IFutRequest<SendItemToTradePileResponse>> _sendItemToTradePileRequestFactory;
@@ -68,6 +70,7 @@ namespace UltimateTeam.Toolkit.Factories
 
         private Func<IEnumerable<long>, IFutRequest<QuickSellResponse>> _quickSellRequestFactory;
 
+
         private Func<IFutRequest<PileSizeResponse>> _pileSizeRequestFactory;
 
         private Func<IFutRequest<ConsumablesResponse>> _consumablesRequestFactory;
@@ -75,6 +78,8 @@ namespace UltimateTeam.Toolkit.Factories
         private Func<IFutRequest<RelistResponse>> _reListRequestFactory;
 
         private Func<IFutRequest<ListGiftsResponse>> _giftListRequestFactory;
+
+        private Func<IFutRequest<ListMessageResponse>> _messageListRequestFactory;
 
         private Func<int, IFutRequest<byte>> _giftRequestFactory;
 
@@ -147,7 +152,7 @@ namespace UltimateTeam.Toolkit.Factories
                 return _loginRequestFactory ?? (_loginRequestFactory = (details, twoFactorCodeProvider) =>
                 {
                     _loginDetails = details;
-                    
+
                     if (_loginDetails.AppVersion == AppVersion.WebApp)
                     {
                         _resources = _webResources;
@@ -166,9 +171,9 @@ namespace UltimateTeam.Toolkit.Factories
                         _resources.Auth = _resources.Auth.Replace(".s2.", ".s3.");
                         _resources.AccountInfo = _resources.AccountInfo.Replace(".s2.", ".s3.");
                     }
-                        var loginRequest = new LoginRequest(_loginDetails, twoFactorCodeProvider) { HttpClient = HttpClient, Resources = _resources };
-                        loginRequest.SetCookieContainer(CookieContainer);
-                        return loginRequest;
+                    var loginRequest = new LoginRequest(_loginDetails, twoFactorCodeProvider) { HttpClient = HttpClient, Resources = _resources };
+                    loginRequest.SetCookieContainer(CookieContainer);
+                    return loginRequest;
                 });
             }
             set
@@ -430,6 +435,22 @@ namespace UltimateTeam.Toolkit.Factories
             }
         }
 
+        public Func<long, IFutRequest<byte>> RemoveLiveMessageRequestFactory
+        {
+            get
+            {
+                return _removeLiveMessageRequestFactory ??
+                    (_removeLiveMessageRequestFactory =
+                        info => SetSharedRequestProperties(new RemoveLiveMessageRequest(info)));
+            }
+            set
+            {
+                value.ThrowIfNullArgument();
+                _removeLiveMessageRequestFactory = value;
+            }
+        }
+
+
         public Func<ushort, IFutRequest<SquadDetailsResponse>> SquadDetailsRequestFactory
         {
             get
@@ -553,6 +574,20 @@ namespace UltimateTeam.Toolkit.Factories
             {
                 value.ThrowIfNullArgument();
                 _giftListRequestFactory = value;
+            }
+        }
+
+        public Func<IFutRequest<ListMessageResponse>> MessageListRequestFactory
+        {
+            get
+            {
+                return _messageListRequestFactory ??
+                    (_messageListRequestFactory = () => SetSharedRequestProperties(new ListMessageRequest()));
+            }
+            set
+            {
+                value.ThrowIfNullArgument();
+                _messageListRequestFactory = value;
             }
         }
 

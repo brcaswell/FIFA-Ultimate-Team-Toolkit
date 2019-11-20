@@ -73,6 +73,11 @@ namespace UltimateTeam.Toolkit.Requests
             return _httpClient.DeleteAsync(requestUri);
         }
 
+        public Task<HttpResponseMessage> SendAsync(HttpRequestMessage message)
+        {
+            return _httpClient.SendAsync(message);
+        }
+
         public Task<byte[]> GetByteArrayAsync(string requestUri)
         {
             return _httpClient.GetByteArrayAsync(requestUri);

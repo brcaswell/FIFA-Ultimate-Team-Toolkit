@@ -12,7 +12,7 @@ namespace UltimateTeam.Toolkit.Requests
 {
     public abstract class FutRequestBase
     {
-        private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error };
+        private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Ignore };
         private IHttpClient _httpClient;
         private LoginDetails _loginDetails = new LoginDetails();
         private LoginResponse _loginResponse = new LoginResponse();
@@ -55,13 +55,21 @@ namespace UltimateTeam.Toolkit.Requests
 
         protected void AddCommonHeaders()
         {
+            /*
             if (LoginResponse?.Persona?.NucUserId == null || LoginResponse?.AuthData?.Sid == null || LoginResponse?.PhishingToken?.Token == null)
+            {
+                throw new Exception($"Got no Nucleus Data and Auth Data during the Loginprocess {LoginDetails?.AppVersion}.");
+            }
+            */
+
+            // Removed phishing token
+            if (LoginResponse?.Persona?.NucUserId == null || LoginResponse?.AuthData?.Sid == null)
             {
                 throw new Exception($"Got no Nucleus Data and Auth Data during the Loginprocess {LoginDetails?.AppVersion}.");
             }
 
             HttpClient.ClearRequestHeaders();
-            HttpClient.AddRequestHeader(NonStandardHttpHeaders.PhishingToken, _loginResponse.PhishingToken.Token);
+           // HttpClient.AddRequestHeader(NonStandardHttpHeaders.PhishingToken, _loginResponse.PhishingToken.Token);
             HttpClient.AddRequestHeader(NonStandardHttpHeaders.NucleusId, _loginResponse.Persona.NucUserId);
             HttpClient.AddRequestHeader(NonStandardHttpHeaders.SessionId, _loginResponse.AuthData.Sid);
             HttpClient.AddRequestHeader(NonStandardHttpHeaders.Origin, @"https://www.easports.com");
@@ -277,7 +285,8 @@ namespace UltimateTeam.Toolkit.Requests
 
                 default:
                     var newException = new FutErrorException(futError, exception);
-                    throw new FutException(string.Format("Unknown EA error, please report it on GitHub - {0}", newException.Message), newException);
+                    throw newException;
+                    //throw new FutException(string.Format("Unknown EA error, please report it on GitHub - {0}", newException.Message), newException);
             }
         }
     }

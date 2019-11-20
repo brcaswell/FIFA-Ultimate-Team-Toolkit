@@ -28,7 +28,7 @@ namespace UltimateTeam.Toolkit.Models
 
         public uint StartingBid { get; set; }
 
-        public byte ConfidenceValue { get; set; }
+        public int ConfidenceValue { get; set; }
 
         public long TradeId { get; set; }
 

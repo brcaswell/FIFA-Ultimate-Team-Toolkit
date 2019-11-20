@@ -23,7 +23,7 @@ namespace UltimateTeam.Toolkit.Requests
             Task<HttpResponseMessage> quickSellResponseTask;
 
             AddCommonHeaders();
-            uriString += $"&_={DateTime.Now.ToUnixTime()}";
+            //uriString += $"&_={DateTime.Now.ToUnixTime()}";
             quickSellResponseTask = HttpClient.DeleteAsync(uriString);
 
             var quickSellResponse = await quickSellResponseTask.ConfigureAwait(false);

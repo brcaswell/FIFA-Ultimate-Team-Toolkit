@@ -69,7 +69,7 @@ namespace UltimateTeam.Toolkit.Requests
                 LoginResponse.Persona.DisplayName = matchingPersona.PersonaName;
 
                 LoginResponse.AuthData = await AuthAsync();
-                LoginResponse.PhishingToken = await ValidateAsync(LoginDetails);
+                //LoginResponse.PhishingToken = await ValidateAsync(LoginDetails); // Commented out 2019
 
                 return LoginResponse;
             }
@@ -139,6 +139,7 @@ namespace UltimateTeam.Toolkit.Requests
             var sended = await SetTwoFactorTypeAsync(loginResponse);
             loginResponse = await LoginForwarder(sended);
 
+            /*
             if (contentData.Contains("send you a code to:"))
             {
                 _authType = AuthenticationType.Email;
@@ -147,18 +148,23 @@ namespace UltimateTeam.Toolkit.Requests
             {
                 _authType = AuthenticationType.App;
             }
-
+            */
             var twoFactorCode = await _twoFactorCodeProvider.GetTwoFactorCodeAsync(_authType);
 
+            // Backup codes have a length greater than 6.
+            /*
             if (twoFactorCode.Length != 6)
             {
                 throw new Exception($"Two Factor Code MUST be 6 digits long {LoginDetails?.AppVersion}.");
             }
+            */
 
+            /*
             if (_authType ==AuthenticationType.Unknown)
             {
-                throw new Exception($"Unable to determine AuthType (i.e. App Authenticator or E-Mail) for {LoginDetails?.AppVersion}.");
+                //throw new Exception($"Unable to determine AuthType (i.e. App Authenticator or E-Mail) for {LoginDetails?.AppVersion}.");
             }
+            */
 
             AddRefererHeader(loginResponse.RequestMessage.RequestUri.ToString());
 

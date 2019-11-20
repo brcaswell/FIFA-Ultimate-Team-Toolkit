@@ -14,7 +14,7 @@ namespace UltimateTeam.Toolkit
     public class FutClient : IFutClient
     {
         public FutRequestFactories RequestFactories { get; }
-
+        
         public FutClient()
         {
             RequestFactories = new FutRequestFactories();
@@ -226,6 +226,16 @@ namespace UltimateTeam.Toolkit
         public Task<ListGiftsResponse> GetGiftsListAsync()
         {
             return RequestFactories.GiftListRequestFactory().PerformRequestAsync();
+        }
+
+        public Task<ListMessageResponse> GetMessageListAsync()
+        {
+            return RequestFactories.MessageListRequestFactory().PerformRequestAsync();
+        }
+
+        public Task RemoveLiveMessageAsync(long id)
+        {
+            return RequestFactories.RemoveLiveMessageRequestFactory(id).PerformRequestAsync();
         }
 
         public Task GetGiftAsync(int idGift)

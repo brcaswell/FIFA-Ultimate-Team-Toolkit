@@ -39,5 +39,8 @@ namespace UltimateTeam.Toolkit.Models
         public string Custom { get; set; }
 
         public string SquadType { get; set; }
+
+        public string Tactics { get; set; }
+
     }
 }

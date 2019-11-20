@@ -28,6 +28,8 @@ namespace UltimateTeam.Toolkit.Requests
 
         Task<HttpResponseMessage> DeleteAsync(string requestUri);
 
+        Task<HttpResponseMessage> SendAsync(HttpRequestMessage message);
+
         Task<byte[]> GetByteArrayAsync(string requestUri);
     }
 }

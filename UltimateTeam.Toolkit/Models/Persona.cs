@@ -17,5 +17,11 @@ namespace UltimateTeam.Toolkit.Models
         public string UserState { get; set; }
 
         public string TrialFree { get; set; }
+
+        // Added for 2019
+        public string onlineAccess { get; set; }
+        public string returningUserTier { get; set; }
+
+
     }
 }

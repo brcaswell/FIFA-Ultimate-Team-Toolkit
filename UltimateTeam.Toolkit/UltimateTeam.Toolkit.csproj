@@ -95,6 +95,8 @@
     <Compile Include="FutClient.cs" />
     <Compile Include="IFutClient.cs" />
     <Compile Include="Models\Attribute.cs" />
+    <Compile Include="Models\Message.cs" />
+    <Compile Include="Models\ListMessageResponse.cs" />
     <Compile Include="Models\PackDetails.cs" />
     <Compile Include="Models\PackContentInfo.cs" />
     <Compile Include="Models\PackExtPrice.cs" />
@@ -192,7 +194,9 @@
     <Compile Include="Requests\ClubItemRequest.cs" />
     <Compile Include="Requests\DefinitionRequest.cs" />
     <Compile Include="Requests\GiftRequest.cs" />
+    <Compile Include="Requests\ListMessageRequest.cs" />
     <Compile Include="Requests\PackRequest.cs" />
+    <Compile Include="Requests\RemoveLiveMessageRequest.cs" />
     <Compile Include="Requests\StoreRequest.cs" />
     <Compile Include="Requests\ListGiftsRequest.cs" />
     <Compile Include="Requests\LoginRequest.cs" />

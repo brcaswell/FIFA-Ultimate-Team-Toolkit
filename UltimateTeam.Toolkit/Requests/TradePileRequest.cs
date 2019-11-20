@@ -14,7 +14,6 @@ namespace UltimateTeam.Toolkit.Requests
             var uriString = Resources.FutHome + Resources.TradePile;
 
             AddCommonHeaders();
-            uriString += $"?_={DateTime.Now.ToUnixTime()}";
 
             var tradePileResponseMessage = await HttpClient
                 .GetAsync(string.Format(uriString))

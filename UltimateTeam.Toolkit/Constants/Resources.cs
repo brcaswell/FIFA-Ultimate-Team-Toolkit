@@ -4,9 +4,9 @@ namespace UltimateTeam.Toolkit.Constants
 {
     internal class Resources
     {
-        private const int CurrentYearShort = 18;
+        private const int CurrentYearShort = 20;
 
-        private const int CurrentYearLong = 2018;
+        private const int CurrentYearLong = 2020;
 
         private const int PreviousYearShort = CurrentYearShort - 1;
 
@@ -66,7 +66,7 @@ namespace UltimateTeam.Toolkit.Constants
 
         public const string ListItem = "item";
 
-        public const string QuickSell = "item?itemIds={0}";
+        public const string QuickSell = "item/{0}";
 
         public const string RemoveFromTradePile = "trade/{0}";
 
@@ -83,6 +83,10 @@ namespace UltimateTeam.Toolkit.Constants
         public const string ActiveMessageList = "activeMessage";
 
         public const string ActiveMessageGet = "activeMessage/{0}";
+
+        public const string LiveMessageList = "livemessage/template?screen=futweblivemsg";
+
+        public const string LiveMessagePut = "livemessage?screen=futweblivemsg";
 
         public const string Definition = "defid?type=player&count=35&start=0&defId={0}";
 
@@ -117,13 +121,13 @@ namespace UltimateTeam.Toolkit.Constants
 
             Pid = "https://gateway.ea.com/proxy/identity/pids/me";
 
-            Item = "http://fifa.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/web/{0}.json";
+            Item = "http://fifa.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/web/{0}.json"; // Still using 2017 one, no 2019
 
-            PlayerImage = "http://fifa.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/images/players/web/{0}.png";
+            PlayerImage = "https://www.easports.com/fifa/ultimate-team/web-app/content/7D49A6B1-760B-4491-B10C-167FBC81D58A/2019/fut/items/images/mobile/portraits/{0}.png";
 
-            FlagsImage = "http://fifa.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/images/cardflagssmall/web/{0}.png";
+            FlagsImage = "https://www.easports.com/fifa/ultimate-team/web-app/content/7D49A6B1-760B-4491-B10C-167FBC81D58A/2019/fut/items/images/mobile/flags/card/{0}.png";
 
-            ClubImage = "http://fifa.content.easports.com/fifa/fltOnlineAssets/CC8267B6-0817-4842-BB6A-A20F88B05418/2017/fut/items/images/clubbadges/web/dark/s{0}.png";
+            ClubImage = "https://www.easports.com/fifa/ultimate-team/web-app/content/7D49A6B1-760B-4491-B10C-167FBC81D58A/2019/fut/items/images/mobile/clubs/normal/{0}.png";
 
             switch (appVersion)
             {
