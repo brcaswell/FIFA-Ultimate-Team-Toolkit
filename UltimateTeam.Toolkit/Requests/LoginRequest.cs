@@ -53,6 +53,7 @@ namespace UltimateTeam.Toolkit.Requests
                 var mainPageResponseMessage = await GetMainPageAsync().ConfigureAwait(false);
                 var loginResponseMessage = await LoginAsync(mainPageResponseMessage);
                 var accessToken = LoginResponse.AuthCode.Code;
+
                 var pidData = await GetPidDataAsync(accessToken);
 
                 LoginResponse.Persona.NucUserId = pidData.Pid.ExternalRefValue;
@@ -86,8 +87,9 @@ namespace UltimateTeam.Toolkit.Requests
             var pidDataResponseMessage = await HttpClient.GetAsync(string.Format(Resources.Pid));
             var pidData = await DeserializeAsync<PidData>(pidDataResponseMessage);
 
-            if (pidData == null || pidData.Pid == null)
+            if (pidData?.Pid == null)
                 throw new Exception($"Got no PID Data during the Loginprocess to to {LoginDetails?.AppVersion}.");
+
             return pidData;
         }
 
@@ -97,7 +99,7 @@ namespace UltimateTeam.Toolkit.Requests
             var authCodeResponseMessage = await HttpClient.GetAsync(string.Format(Resources.AuthCode, accessToken));
             var authCode = await DeserializeAsync<AuthCode>(authCodeResponseMessage);
 
-            if (authCode == null || authCode.Code == null)
+            if (authCode?.Code == null)
                 throw new Exception($"Got no AuthCode during the Loginprocess to {LoginDetails?.AppVersion}.");
 
             return authCode;
@@ -105,28 +107,16 @@ namespace UltimateTeam.Toolkit.Requests
 
         protected async Task<HttpResponseMessage> SetTwoFactorTypeAsync(HttpResponseMessage mainPageResponseMessage)
         {
-            var loginResponseMessage = new HttpResponseMessage();
-            var contentData = string.Empty;
+            var postData = (_authType == AuthenticationType.Email)
+                ? new[] {
+                    new KeyValuePair<string, string>("_eventId", "submit"),
+                }
+                : new[] {
+                    new KeyValuePair<string, string>("_eventId", "submit"),
+                    new KeyValuePair<string, string>("codeType", "APP"),
+                };
 
-            if (_authType == AuthenticationType.Email)
-            {
-                loginResponseMessage = await HttpClient.PostAsync(mainPageResponseMessage.RequestMessage.RequestUri, new FormUrlEncodedContent(
-                                                                                                                            new[]
-                                                                                                                            {
-                                                                                                                            new KeyValuePair<string, string>("_eventId", "submit"),
-                                                                                                                            }));
-            }
-            else
-            {
-                loginResponseMessage = await HttpClient.PostAsync(mainPageResponseMessage.RequestMessage.RequestUri, new FormUrlEncodedContent(
-                                                                                                                            new[]
-                                                                                                                            {
-                                                                                                                            new KeyValuePair<string, string>("_eventId", "submit"),
-                                                                                                                            new KeyValuePair<string, string>("codeType", "APP"),
-                                                                                                                            }));
-            }
-
-            return loginResponseMessage;
+            return await HttpClient.PostAsync(mainPageResponseMessage.RequestMessage.RequestUri, new FormUrlEncodedContent(postData));
         }
 
         protected async Task<HttpResponseMessage> SetTwoFactorCodeAsync(HttpResponseMessage loginResponse)
@@ -139,32 +129,7 @@ namespace UltimateTeam.Toolkit.Requests
             var sended = await SetTwoFactorTypeAsync(loginResponse);
             loginResponse = await LoginForwarder(sended);
 
-            /*
-            if (contentData.Contains("send you a code to:"))
-            {
-                _authType = AuthenticationType.Email;
-            }
-            else if (contentData.Contains("App Authenticator"))
-            {
-                _authType = AuthenticationType.App;
-            }
-            */
             var twoFactorCode = await _twoFactorCodeProvider.GetTwoFactorCodeAsync(_authType);
-
-            // Backup codes have a length greater than 6.
-            /*
-            if (twoFactorCode.Length != 6)
-            {
-                throw new Exception($"Two Factor Code MUST be 6 digits long {LoginDetails?.AppVersion}.");
-            }
-            */
-
-            /*
-            if (_authType ==AuthenticationType.Unknown)
-            {
-                //throw new Exception($"Unable to determine AuthType (i.e. App Authenticator or E-Mail) for {LoginDetails?.AppVersion}.");
-            }
-            */
 
             AddRefererHeader(loginResponse.RequestMessage.RequestUri.ToString());
 
@@ -181,25 +146,21 @@ namespace UltimateTeam.Toolkit.Requests
             var codeResponseMessageContent = await codeResponseMessage.Content.ReadAsStringAsync();
 
             if (codeResponseMessageContent.Contains("Incorrect code entered"))
-            {
                 throw new Exception($"Incorrect Two Factor Code entered for {LoginDetails?.AppVersion}.");
-            }
 
             return codeResponseMessage;
         }
 
         protected async Task<HttpResponseMessage> LoginForwarder(HttpResponseMessage responseMessage)
         {
-            HttpResponseMessage forwardResponseMessage = new HttpResponseMessage();
             var contentData = await responseMessage.Content.ReadAsStringAsync();
             if (contentData.Contains("https://signin.ea.com:443/p/web2/login?execution="))
             {
                 Match executionIdMatch = Regex.Match(contentData, @"https:\/\/signin\.ea\.com:443\/p\/web2\/login\?execution=([A-Za-z0-9\-]+)");
 
                 string executionId = executionIdMatch.Groups[1].Value;
-                forwardResponseMessage = await HttpClient.GetAsync("https://signin.ea.com:443/p/web2/login?execution=" + executionId + "&_eventId=end");
 
-                return forwardResponseMessage;
+                return await HttpClient.GetAsync("https://signin.ea.com:443/p/web2/login?execution=" + executionId + "&_eventId=end"); ;
             }
             return responseMessage;
         }
@@ -214,10 +175,9 @@ namespace UltimateTeam.Toolkit.Requests
             var shardsResponseContent = await shardsResponseMessage.Content.ReadAsStringAsync();
             var shards = await DeserializeAsync<Shards>(shardsResponseMessage);
 
-            if (shards?.ShardInfo == null || shards.ShardInfo.Count <= 0)
-            {
+            if ((shards?.ShardInfo?.Count ?? 0) <= 0)
                 throw new Exception($"Unable to get Shards {LoginDetails?.AppVersion}.");
-            }
+
             return shards;
         }
 
@@ -231,10 +191,9 @@ namespace UltimateTeam.Toolkit.Requests
             var accountInfoResponseMessageContent = await accountInfoResponseMessage.Content.ReadAsStringAsync();
             var userAccounts = await DeserializeAsync<UserAccounts>(accountInfoResponseMessage);
 
-            if (userAccounts?.UserAccountInfo?.Personas == null || userAccounts.UserAccountInfo.Personas.Count() <= 0)
-            {
+            if ((userAccounts?.UserAccountInfo?.Personas?.Count() ?? 0) <= 0)
                 throw new Exception($"Unable to get Personas {LoginDetails?.AppVersion}.");
-            }
+
             return userAccounts;
         }
 
@@ -243,7 +202,7 @@ namespace UltimateTeam.Toolkit.Requests
             var matchingPersona = new Persona();
             try
             {
-                matchingPersona = LoginResponse.UserAccounts.UserAccountInfo.Personas.First(n => n.UserClubList.First().Platform ==     GetPlatform(LoginDetails.Platform));
+                matchingPersona = LoginResponse.UserAccounts.UserAccountInfo.Personas.First(n => n.UserClubList.First().Platform == GetPlatform(LoginDetails.Platform));
             }
             catch (Exception e)
             {
